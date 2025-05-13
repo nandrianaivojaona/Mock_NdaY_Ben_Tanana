@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NdaY'Ben'Tanàna</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <p><a href="#" onclick="event.preventDefault(); currentUser = null; alert('Logged out')">Logout</a></p>
+<!-- Header Section -->
+<header>
+  <div class="header-container">
+    <div class="welcome-text">Welcome</div>
+    <div class="logo-container">
+      <img src="assets/images/NdaY_Ben_Tanana.png" alt="Logo" class="logo">
+      <p class="logo-text">Plateforme de Digitalisation des Services Civiques à Madagascar</p>
+    </div>
+    <div class="tagline">Empowering Communities Through Transparency</div>
+  </div>
+</header>
+
+<!-- Navigation Menu -->
+<nav>
+  <ul id="menu">
+    <li><button data-tab="home" onclick="handleTabChange('home')">Home</button></li>
+    <li><button data-tab="pay" onclick="handleTabChange('pay')">Pay Tax</button></li>
+    <li><button data-tab="status" onclick="handleTabChange('status')">Tax Status</button></li>
+    <li><button data-tab="certificates" onclick="handleTabChange('certificates')">Certificates</button></li>
+    <li><button data-tab="legalization" onclick="handleTabChange('legalization')">Legalization Acts</button></li>
+    <li><button data-tab="certification" onclick="handleTabChange('certification')">Certification Originals</button></li>
+    <li><button data-tab="services" onclick="handleTabChange('services')">Kiosk Services</button></li>
+    <!-- Replace Sign-In Button with Username + Sign-Out Button -->
+    <li id="auth-button" class="sign-in">
+        <!-- Will be replaced dynamically -->
+      </li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<main>
+  <section id="content">
+    <!-- Default Message from the Mayor -->
+    <div id="default-message">
+      <h2>Message from the Mayor</h2>
+      <p>Welcome to NdaY'Ben'Tanàna, the platform transforming governance in Madagascar. We are committed to transparency, inclusion, and innovation. Explore our services to simplify your civic duties and empower your community.</p>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-text">© 2025 NdaY'Ben'Tanàna - All Rights Reserved</div>
+</footer>
+
+<!-- Embedded Mock Data -->
+<script type="application/json" id="mockData">
+    {
+      "paymentForm": {
+        "fields": [
+          { "label": "Plot Number", "type": "text", "placeholder": "Enter plot number" },
+          { "label": "Year", "type": "select", "options": ["2023", "2024"] }
+        ]
+      },
+    
+      "taxStatus": {
+        "year": "2024",
+        "status": "Paid",
+        "amount": "Ar 1,500,000",
+        "blockchainVerified": true
+      },
+    
+      "userTaxRecords": {
+        "admin": [
+          {
+            "id": "TAX2024-001",
+            "plotNumber": "A123",
+            "year": "2023",
+            "amount": "Ar 1,500,000",
+            "paid": false
+          },
+          {
+            "id": "TAX2024-002",
+            "plotNumber": "B456",
+            "year": "2022",
+            "amount": "Ar 900,000",
+            "paid": false
+          }
+        ],
+    
+        "user1": [
+          {
+            "id": "TAX2024-003",
+            "plotNumber": "C789",
+            "year": "2023",
+            "amount": "Ar 1,200,000",
+            "paid": false
+          }
+        ],
+    
+        "user2": [
+          {
+            "id": "TAX2024-004",
+            "plotNumber": "D101",
+            "year": "2021",
+            "amount": "Ar 750,000",
+            "paid": false
+          },
+          {
+            "id": "TAX2024-005",
+            "plotNumber": "E202",
+            "year": "2022",
+            "amount": "Ar 800,000",
+            "paid": false
+          }
+        ],
+    
+        "guest": []
+      }
+    }
+    </script>
+</script>
+
+<!-- Script -->
+<script src="script.js"></script>
+
+</body>
+</html>

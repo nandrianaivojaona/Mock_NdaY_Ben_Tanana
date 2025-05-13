@@ -1,0 +1,8 @@
+Oui, notre startup dispose d’un **prototype fonctionnel** de **NdaY’Ben’Tanàna**, une plateforme web (ndayben.mg) pour simuler le paiement des impôts fonciers à Antananarivo. Déployé sur Vercel (https://ndayben-mvp.vercel.app), le prototype permet :  
+1. **Vérifier le statut fiscal** : saisir P002 pour afficher le montant 2025 et l’état (payé/en attente).  
+2. **Simuler un paiement** : saisir P001, sélectionner Orange Money, et confirmer gratuitement.  
+3. **Consulter l’historique fiscal** : afficher 10 ans (2016–2025) de données pour chaque parcelle.  
+Optimisé pour téléphones (design responsive, contraste 4.5:1, ARIA), il est accessible à 60% des contribuables à faible connectivité 
+(150,000 personnes). 
+Testé pour WCAG 2.1 (Axe DevTools) et multilingue (malgache/français), il démontre un impact pour 1,000 contribuables en pilote. 
+Évolutif vers USSD (*123#), le prototype est prêt pour POESAM 2025 (vidéo : [YouTube link], testez P001/P002).

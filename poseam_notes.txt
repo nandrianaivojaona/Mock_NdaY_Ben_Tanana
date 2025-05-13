@@ -1,0 +1,11 @@
+NdaY’Ben’Tanàna POESAM 2025 Test Instructions
+URL: https://ndayben-mvp.vercel.app
+Test Parcels:
+- P001: 50,000 MGA, PENDING (try Payment Form)
+- P002: 75,000 MGA, PAID (try Tax Status Check)
+Instructions:
+1. Open URL in Chrome (desktop or phone).
+2. Payment Form: Enter P001, click “Vérifier”, select Orange Money, click “Payer”.
+3. Tax Status Check: Enter P002, click “Vérifier”, view status.
+4. Switch language (Malagasy/French).
+Demo Video: [YouTube link]
