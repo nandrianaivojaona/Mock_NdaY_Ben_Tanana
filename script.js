@@ -8,61 +8,67 @@ let activeTab = 'home';
 
 // Function: Handle Tab Switching to Protect "Pay Tax"
 function handleTabChange(tab) {
-    const contentDiv = document.getElementById('content');
-    const defaultMessage = document.getElementById('default-message');
-  
-    // Clear previous content
-    contentDiv.innerHTML = '';
-    activeTab = tab;
-  
-    // Render based on tab
-    switch (tab) {
-        case 'home':
-            renderHome(contentDiv);
-            break;
-  
-        case 'pay':
-            if (!currentUser) {
-              contentDiv.innerHTML = `
-                <h2>Access Denied</h2>
-                <p>Please <a href="#" onclick="event.preventDefault(); toggleSignIn(contentDiv)">sign in</a> to pay land tax.</p>
-              `;
-            } else {
-              renderPayTaxForm(contentDiv, currentUser.id);
-            }
-            break;
-  
-        case 'status':
-                if (!currentUser) {
-                  contentDiv.innerHTML = `
-                    <h2>Access Denied</h2>
-                    <p>Please <a href="#" onclick="event.preventDefault(); toggleSignIn(contentDiv)">sign in</a> to view your tax status.</p>
-                  `;
-                } else {
-                  renderTaxStatus(contentDiv, currentUser.id);
-                }
-            break;
-  
-        case 'signin':
-                toggleSignIn(contentDiv);
-            break;
-  
-      default:
-        contentDiv.innerHTML = `<h2>${tab.replace(/^\w/, c => c.toUpperCase())} Page</h2><p>Under construction...</p>`;
-    }
-  
-    // Hide default message
-    defaultMessage.classList.add('hidden');
-    // Update the active tab to ensure the auth button reflects current state whenever a tab is changed
-    updateAuthButton();
+  const contentDiv = document.getElementById('content');
+  const defaultMessage = document.getElementById('default-message');
+
+  // Always clear content first
+  contentDiv.innerHTML = '';
+  defaultMessage.classList.remove('hidden'); // Default: hide unless needed
+  activeTab = tab;
+
+  let hasRealContent = false;
+
+  switch (tab) {
+    case 'home':
+      renderHome(contentDiv);
+      hasRealContent = true;
+      break;
+
+    case 'pay':
+    case 'status':
+      if (!currentUser) {
+        contentDiv.innerHTML = `
+        <h2>Access Denied</h2>
+        <p>You must be logged in to continue. <a href="#" onclick="event.preventDefault(); toggleSignIn(document.getElementById('content'))">Sign in</a></p>
+        `;
+        toggleSignIn(contentDiv);
+      } else {
+        if (tab === 'pay') {
+          renderPayTaxForm(contentDiv, currentUser.id);
+        } else {
+          renderTaxStatus(contentDiv, currentUser.id);
+        }
+        hasRealContent = true;
+      }
+      break;
+
+    case 'certificates':
+    case 'legalization':
+    case 'certification':
+    case 'services':
+      showConstructionModal();
+      defaultMessage.classList.remove('hidden'); // Keep mayor message visible// Show modal instead of replacing content
+      hasRealContent = false;
+      break;
+
+    case 'signin':
+      toggleSignIn(contentDiv);
+      break;
+
+    default:
+      showConstructionModal();
+      defaultMessage.classList.remove('hidden'); // Keep mayor message visible
+      hasRealContent = false;
   }
 
-// Function: Render Home
-function renderHome(container) {
-  container.innerHTML = `
-    <h2>Welcome to NdaY'Ben'Tanàna</h2>
-    <p>This platform simplifies civic duties and empowers communities through transparency and innovation.</p>
-  `;
+  // Hide mayor's message only if real content is shown
+  if (hasRealContent) {
+    defaultMessage.classList.add('hidden');
+  } else {
+    defaultMessage.classList.remove('hidden');
+  }
+// At the very end of handleTabChange(tab) Clear Modal on Tab Switch
+document.getElementById('construction-modal').classList.add('hidden');
 }
 
 // Function: Render Payment Form
@@ -205,53 +211,66 @@ function renderTaxStatus(container, userId) {
 
 // Function: Sign-In Form
 function toggleSignIn(container) {
-    const mockUsers = [
-      { id: 'admin', name: 'Admin User', password: 'password' },
-      { id: 'user1', name: 'Rakoto Lekely', password: 'password' },
-      { id: 'user2', name: 'Ravao Bodo', password: 'password' },
-      { id: 'user3', name: 'Rajaona Andry', password: 'password' },
-      { id: 'guest', name: 'Mpitsidika', password: '' }
-    ];
-  
-    const userOptions = mockUsers
-      .map(user => `<option value="${user.id}">${user.name}</option>`)
-      .join('');
-  
-    container.innerHTML = `
-      <h2>Sign In</h2>
-      <form id="signin-form">
-        <label for="userId">User:</label>
-        <select id="userId" name="userId">
-          <option value="" disabled selected>Select a user</option>
-          ${userOptions}
-        </select><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" placeholder="Enter Password"><br><br>
-        <button type="submit">Sign In</button>
-      </form>
-    `;
-  
-    document.getElementById('signin-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const userId = document.getElementById('userId').value;
-        const password = document.getElementById('password').value;
-      
-        const user = mockUsers.find(u => u.id === userId);
-      
-        if (!user) return alert('User not found!');
-      
-        if (user.password === '' || user.password === password) {
-          currentUser = user;
-          updateAuthButton(); // 👈 This line updates the button UI
-          showToast(`Welcome, ${user.name}!`);
-          handleTabChange('pay');
-        } else {
-          alert('Invalid Credentials');
-        }
-      });
-  }
+  container.innerHTML = ''; // ✅ Clear any previous content
+  showToast(`Welcome, ${user.name}!`);
+  handleTabChange(activeTab); // This clears modal and restores message
+
+  const mockUsers = [
+    { id: 'admin', name: 'Admin User', password: 'password' },
+    { id: 'user1', name: 'Rakoto Lekely', password: 'password' },
+    { id: 'user2', name: 'Ravao Bodo', password: 'password' },
+    { id: 'guest', name: 'Mpitsidika', password: '' }
+  ];
+
+  const userOptions = mockUsers
+    .map(user => `<option value="${user.id}">${user.name}</option>`)
+    .join('');
+
+  container.innerHTML = `
+    <h2>Sign In</h2>
+    <form id="signin-form">
+      <label for="userId">User:</label>
+      <select id="userId" name="userId">
+        <option value="" disabled selected>Select a user</option>
+        ${userOptions}
+      </select><br><br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter Password"><br><br>
+      <button type="submit">Sign In</button>
+    </form>
+  `;
+
+  document.getElementById('signin-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const userId = document.getElementById('userId').value;
+    const password = document.getElementById('password').value;
+
+    const user = mockUsers.find(u => u.id === userId);
+
+    if (!user) return alert('User not found!');
+
+    if (user.password === '' || user.password === password) {
+      currentUser = user;
+      updateAuthButton();
+      showToast(`Welcome, ${user.name}!`);
+
+      // ✅ Reload current tab after login
+      handleTabChange(activeTab);
+    } else {
+      alert('Invalid Credentials');
+    }
+  });
+}
 // helper function to update the button
 function updateAuthButton() {
+  document.getElementById('auth-button').innerHTML = `
+  <button onclick="event.preventDefault(); toggleSignIn(document.getElementById('content'))">
+    Sign In
+  </button>
+`;
+
+// Restore Mayor's message
+document.getElementById('default-message').classList.remove('hidden');
     const authBtnContainer = document.getElementById('auth-button');
     if (currentUser) {
         authBtnContainer.innerHTML = `
@@ -267,6 +286,16 @@ function updateAuthButton() {
       `;
     }
   }
+// Helper founction for Modal
+function showConstructionModal() {
+  const modal = document.getElementById('construction-modal');
+  modal.classList.remove('hidden');
+}
+
+function hideConstructionModal() {
+  const modal = document.getElementById('construction-modal');
+  modal.classList.add('hidden');
+}
 // Hover behavior for menu buttons
 document.querySelectorAll('#menu button').forEach(button => {
   const defaultMessage = document.getElementById('default-message');
@@ -282,3 +311,4 @@ document.querySelectorAll('#menu button').forEach(button => {
     defaultMessage.classList.add('hidden');
   });
 });
+

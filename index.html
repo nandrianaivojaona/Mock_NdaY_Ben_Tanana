@@ -6,8 +6,19 @@
   <title>NdaY'Ben'Tanàna</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+<!-- Modal for Under Construction -->
+<div id="construction-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="modal-close" onclick="hideConstructionModal()">×</span>
+    <h2>Under Construction</h2>
+    <p>This section is still being built. Please check back later.</p>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden"></div>
 <body>
-    <p><a href="#" onclick="event.preventDefault(); currentUser = null; alert('Logged out')">Logout</a></p>
+   <!-- <p><a href="#" onclick="event.preventDefault(); currentUser = null; alert('Logged out')">Logout</a></p> -->
 <!-- Header Section -->
 <header>
   <div class="header-container">
