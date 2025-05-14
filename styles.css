@@ -1,277 +1,274 @@
-/* General Styles */
+/* ================== */
+/* === RESET STYLES === */
+/* ================== */
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    position: relative;
-    min-height: 100vh;
-    background-color: #f9f9f9;
-  }
-  
-  /* Background Image with Dimmed Overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('assets/images/NdaY_Logo.png');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.4;
-    z-index: -1;
-  }
-  
-  /* Header Section */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: rgba(121, 212, 194, 0.9);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  .header-container {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .welcome-text {
-    font-size: 16px;
-    font-weight: bold;
-    color: #0b4635;
-  }
-  
-  .logo-container {
-    text-align: center; /* Center the logo and text */
-  }
-  
-  .logo {
-    width: 100px;
-    height: 100px;
-    display: block;
-    margin: 0 auto;
-  }
-  
-  .logo-text {
-    margin-top: 2px;
-    font-size: 10px;
-    color: #0996d2;
-  }
-  
-  .tagline {
-    font-size: 8px;
-    font-style: italic;
-    color: #555;
-  }
-  
-  /* Navigation Menu */
-  nav {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    list-style: none;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-  }
-  
-  nav button {
-    padding: 10px 20px;
-    background-color: #067c78;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  nav button:hover {
-    background-color: #6ef4c7;
-  }
-  
-  nav .sign-in {
-    margin-left: auto;
-  }
-  
-  /* Sign-In Form */
-  #content h3 {
-    margin-top: 20px;
-  }
-  
-  #signin-form {
-    background-color: #6ef4c7;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #02130d;
-    display: flex;
-    flex-direction: column;
-    max-width: 300px;
-    margin: 0 auto;
-  }
-  
-  #signin-form label {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  #signin-form select,
-  #signin-form input {
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  #signin-form button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  #signin-form button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Main Content */
-  main {
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    min-height: calc(100vh - 100px);
-  }
-  
-  #content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 30px 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  }
-  
-  /* Default Message Styling */
-  #default-message {
-    text-align: center;
-    padding: 20px;
-    background-color: rgba(240, 240, 240, 0.8);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.3s ease;
-    opacity: 1;
-  }
-  
-  #default-message.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  /* Footer */
-  footer {
-    background-color: rgba(255, 255, 255, 0.9);
-    text-align: center;
-    padding: 10px 20px;
-    position: sticky;
-    bottom: 0;
-  }
-  
-  .footer-text {
-    font-size: 12px;
-    color: #555;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 600px) {
-    .logo {
-      width: 60px;
-      height: 60px;
-    }
-  
-    .logo-text {
-      font-size: 8px;
-    }
-  
-    .tagline {
-      font-size: 6px;
-    }
-  
-    nav ul {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    nav button {
-      width: 100%;
-      text-align: center;
-    }
-  }
-    /* Style for render payement successful */
-    .success-message {
-        background-color: #d4edda;
-        color: #155724;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #c3e6cb;
-        max-width: 500px;
-        margin: 0 auto;
-        text-align: center;
-      }
-      /* for better styling */
-      .tax-list {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-      
-      .tax-record {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 5px solid #ccc;
-      }
-      
-      .tax-record.paid {
-        border-left-color: #28a745;
-      }
-      
-      .tax-record.unpaid {
-        border-left-color: #dc3545;
-      }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-      #default-message {
-        transition: opacity 0.4s ease-in-out;
-      }
-      
-      #default-message.hidden {
-        opacity: 0;
-        pointer-events: none;
-      }
+/* ================== */
+/* === BASE STYLES ==== */
+/* ================== */
 
-      /* Modal Styles */
+body {
+  font-family: Arial, sans-serif;
+  position: relative;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+}
+
+/* Background Image with Dimmed Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/images/NdaY_Logo.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+/* ================== */
+/* === HEADER STYLES === */
+/* ================== */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: rgba(121, 212, 194, 0.9);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+welcome-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0b4635;
+}
+
+logo-container {
+  text-align: center;
+}
+
+logo {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 0 auto;
+}
+
+.logo-text,
+.tagline {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #555;
+}
+
+.tagline {
+  font-size: 8px;
+  font-style: italic;
+}
+
+/* ================== */
+/* === NAVIGATION STYLES === */
+/* ================== */
+
+nav {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+nav button {
+  padding: 10px 20px;
+  background-color: #067c78;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+nav button:hover {
+  background-color: #6ef4c7;
+}
+
+nav .sign-in {
+  margin-left: auto;
+}
+
+/* ================== */
+/* === SIGN-IN FORM STYLES === */
+/* ================== */
+
+#content h3 {
+  margin-top: 20px;
+}
+
+#signin-form {
+  background-color: #6ef4c7;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #02130d;
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+#signin-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#signin-form select,
+#signin-form input {
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#signin-form button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#signin-form button:hover {
+  background-color: #0056b3;
+}
+
+/* ================== */
+/* === MAIN CONTENT STYLES === */
+/* ================== */
+
+main {
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  min-height: calc(100vh - 100px);
+}
+
+#content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Default Message Styling */
+#default-message {
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(240, 240, 240, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+#default-message.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ================== */
+/* === FOOTER STYLES === */
+/* ================== */
+
+footer {
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 10px 20px;
+  position: sticky;
+  bottom: 0;
+}
+
+.footer-text {
+  font-size: 12px;
+  color: #555;
+}
+
+/* ================== */
+/* === SUCCESS MESSAGE === */
+/* ================== */
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #c3e6cb;
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Tax List Styles */
+.tax-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tax-record {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 5px solid #ccc;
+}
+
+.tax-record.paid {
+  border-left-color: #28a745;
+}
+
+.tax-record.unpaid {
+  border-left-color: #dc3545;
+}
+
+/* ================== */
+/* === MODAL STYLES === */
+/* ================== */
+
 .modal {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -302,4 +299,34 @@
 
 .modal-close:hover {
   color: black;
+}
+
+/* ================== */
+/* === RESPONSIVE DESIGN === */
+/* ================== */
+
+@media (max-width: 600px) {
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo-text,
+  .tagline {
+    font-size: 8px;
+  }
+
+  .tagline {
+    font-size: 6px;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav button {
+    width: 100%;
+    text-align: center;
+  }
 }
