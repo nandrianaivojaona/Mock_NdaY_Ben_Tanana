@@ -7,25 +7,17 @@ const mockData = JSON.parse(document.getElementById('mockData').textContent);
 // State variable for active tab
 let activeTab = 'home';
 
-// Mock users list (for sign-in)
-const mockUsers = [
-  { id: 'admin', name: 'Admin User', password: 'password' },
-  { id: 'user1', name: 'Rakoto Lekely', password: 'password' },
-  { id: 'user2', name: 'Ravao Bodo', password: 'password' },
-  { id: 'guest', name: 'Mpitsidika', password: '' }
-];
-
 // Function: Handle Tab Switching
 function handleTabChange(tab) {
   const contentDiv = document.getElementById('content');
   const defaultMessage = document.getElementById('default-message');
 
-  // Always clear content first
+  // Clear previous content
   contentDiv.innerHTML = '';
-  defaultMessage.classList.remove('hidden');
-  if (hasRealContent) {
-    defaultMessage.classList.add('hidden');
-  }
+
+  // Default: hide mayor's message unless overridden
+  defaultMessage.classList.add('hidden');
+
   activeTab = tab;
   let hasRealContent = false;
 
@@ -34,6 +26,7 @@ function handleTabChange(tab) {
       renderHome(contentDiv);
       hasRealContent = true;
       break;
+
     case 'pay':
     case 'status':
       if (!currentUser) {
@@ -43,11 +36,9 @@ function handleTabChange(tab) {
             <a href="#" onclick="event.preventDefault(); toggleSignIn(document.getElementById('content'))">Sign in</a>
           </p>
         `;
-        // Force hide default message
-        defaultMessage.classList.add('hidden');
         toggleSignIn(contentDiv);
       } else {
-         if (tab === 'pay') {
+        if (tab === 'pay') {
           renderPayTaxForm(contentDiv, currentUser.id);
         } else {
           renderTaxStatus(contentDiv, currentUser.id);
@@ -55,32 +46,46 @@ function handleTabChange(tab) {
         hasRealContent = true;
       }
       break;
+
     case 'certificates':
     case 'legalization':
     case 'certification':
     case 'services':
+      // Show modal and scroll to it
       showConstructionModal();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       hasRealContent = false;
       break;
+
     case 'signin':
       toggleSignIn(contentDiv);
+      hasRealContent = true;
       break;
+
     default:
       showConstructionModal();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       hasRealContent = false;
   }
 
-  if (hasRealContent) {
+  // Only show mayor's message if no real content is shown
+  if (hasRealContent || ['certificates', 'legalization', 'certification', 'services'].includes(tab)) {
     defaultMessage.classList.add('hidden');
+  } else {
+    defaultMessage.classList.remove('hidden');
   }
 
-  // Clear modal on tab change
+  // Always hide construction modal after handling tab change
   document.getElementById('construction-modal').classList.add('hidden');
 }
 
 // Function: Render Home Page
 function renderHome(container) {
-  container.innerHTML = '';
+  container.innerHTML = `
+    <h2>Message from the Mayor</h2>
+    <p>Welcome to NdaY'Ben'Tanàna, the platform transforming governance in Madagascar...</p>
+  `;
+  document.getElementById('default-message').classList.remove('hidden');
 }
 
 // Function: Render Payment Form
@@ -96,101 +101,140 @@ function renderPayTaxForm(container, userId) {
     return;
   }
 
+  let selectedRecord = null;
+
   if (unpaidRecords.length === 1) {
-    const record = unpaidRecords[0];
-    container.innerHTML = `
-      <h2>Pay Land Tax</h2>
-      <form id="pay-tax-form">
-        <label>Plot Number:</label>
-        <input type="text" value="${record.plotNumber}" readonly>
-        <label>Year:</label>
-        <input type="text" value="${record.year}" readonly>
-        <label>Amount Due:</label>
-        <input type="text" value="${record.amount}" readonly>
-        <button type="submit" class="btn btn--primary">Pay Now</button>
-      </form>
-    `;
+    selectedRecord = unpaidRecords[0];
+    showPaymentForm(container, selectedRecord);
   } else {
     container.innerHTML = `
       <h2>Select a Land Tax to Pay</h2>
-      <form id="pay-tax-form">
+      <form id="tax-record-form">
         <label for="taxRecordSelect">Unpaid Taxes:</label>
-        <select id="taxRecordSelect">
+        <select id="taxRecordSelect" required>
           ${unpaidRecords.map(rec => `
             <option value="${rec.id}">
               Plot: ${rec.plotNumber} | Year: ${rec.year} | Amount: ${rec.amount}
             </option>
           `).join('')}
-        </select><br><br>
-        <button type="submit" class="btn btn--primary">Proceed to Payment</button>
+        </select>
+        <br><br>
+        <button type="submit">Proceed to Payment</button>
       </form>
     `;
-  }
 
-  document.getElementById('pay-tax-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    let selectedRecord = null;
-    if (unpaidRecords.length === 1) {
-      selectedRecord = unpaidRecords[0];
-    } else {
+    document.getElementById('tax-record-form').addEventListener('submit', function (e) {
+      e.preventDefault();
       const selectedId = document.getElementById('taxRecordSelect').value;
       selectedRecord = unpaidRecords.find(r => r.id === selectedId);
+      if (selectedRecord) {
+        showPaymentForm(container, selectedRecord);
+      }
+    });
+  }
+}
+
+// Helper: Display the actual payment form
+function showPaymentForm(container, record) {
+  container.innerHTML = `
+    <h2>Confirm Land Tax Payment</h2>
+    <form id="payment-form">
+      <div class="form-group">
+        <label for="plotNumber">Land Reference (Plot Number):</label>
+        <input type="text" id="plotNumber" value="${record.plotNumber}" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="year">Year:</label>
+        <input type="text" id="year" value="${record.year}" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Amount to Pay:</label>
+        <input type="text" id="amount" value="${record.amount}" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentMethod">Choose Payment Method:</label>
+        <select id="paymentMethod" required>
+          <option value="">-- Select Payment Method --</option>
+          <option value="orange_money">Orange Money</option>
+          <option value="mvola">Mvola</option>
+          <option value="airtel_money">Airtel Money</option>
+          <option value="credit_card">Credit Card</option>
+          <option value="bank_transfer">Bank Transfer</option>
+          <option value="other">Other Online Payment</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number (for mobile money):</label>
+        <input type="tel" id="phoneNumber" placeholder="Enter phone number" pattern="[0-9]{10}" required>
+      </div>
+
+      <button type="submit">Confirm & Pay</button>
+    </form>
+  `;
+
+  // Handle form submission
+  document.getElementById('payment-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const method = document.getElementById('paymentMethod').value;
+    const phone = document.getElementById('phoneNumber').value;
+
+    if (!method) {
+      alert("Please select a payment method.");
+      return;
     }
-    if (selectedRecord) {
-      selectedRecord.paid = true;
-      renderPaymentSuccess(container, selectedRecord);
+
+    if ((method.includes("money")) && (!phone || phone.length !== 10)) {
+      alert("Please enter a valid 10-digit phone number for mobile payments.");
+      return;
     }
+
+    // Simulate successful payment
+    record.paid = true;
+    renderPaymentSuccess(container, record, method, phone);
   });
 }
 
-// Helper Function: Render Payment Success
-function renderPaymentSuccess(container, record) {
+function renderPaymentSuccess(container, record, method, phone) {
+  const paymentMethods = {
+    orange_money: "Orange Money",
+    mvola: "Mvola",
+    airtel_money: "Airtel Money",
+    credit_card: "Credit Card",
+    bank_transfer: "Bank Transfer",
+    other: "Other Online Payment"
+  };
+
+  const methodName = paymentMethods[method] || "Unknown Method";
+
   container.innerHTML = `
     <div class="success-message">
       <h2>✅ Payment Successful!</h2>
       <p><strong>Plot Number:</strong> ${record.plotNumber}</p>
       <p><strong>Year:</strong> ${record.year}</p>
       <p><strong>Amount Paid:</strong> ${record.amount}</p>
+      <p><strong>Payment Method:</strong> ${methodName}</p>
+      ${phone ? `<p><strong>Mobile Number Used:</strong> ${phone}</p>` : ''}
       <p><strong>Transaction ID:</strong> ${record.id}</p>
       <p><strong>Blockchain Verified:</strong> Yes</p>
-      <button class="btn btn--primary" onclick="handleTabChange('status')">View Updated Tax Status</button>
-    </div>
-  `;
-}
-
-// Function: Render Tax Status
-function renderTaxStatus(container, userId) {
-  const userRecords = mockData.userTaxRecords[userId] || [];
-
-  if (userRecords.length === 0) {
-    container.innerHTML = `
-      <h2>No Tax Records Found</h2>
-      <p>You have no land tax records available.</p>
-    `;
-    return;
-  }
-
-  const allTaxesHTML = userRecords.map(record => `
-    <div class="tax-record ${record.paid ? 'paid' : 'unpaid'}">
-      <p><strong>Plot Number:</strong> ${record.plotNumber}</p>
-      <p><strong>Year:</strong> ${record.year}</p>
-      <p><strong>Status:</strong> ${record.paid ? 'Paid' : 'Unpaid'}</p>
-      <p><strong>Amount:</strong> ${record.amount}</p>
-      ${record.paid ? `<p><strong>Verified:</strong> Yes</p>` : ''}
-    </div>
-  `).join('');
-
-  container.innerHTML = `
-    <h2>Your Tax Status</h2>
-    <div class="tax-list">
-      ${allTaxesHTML}
+      <button onclick="handleTabChange('status')">View Updated Tax Status</button>
     </div>
   `;
 }
 
 // Function: Sign-In Form
 function toggleSignIn(container) {
-  container.innerHTML = ''; // Clear any previous content
+  container.innerHTML = '';
+  const mockUsers = [
+    { id: 'admin', name: 'Admin User', password: 'password' },
+    { id: 'user1', name: 'Rakoto Lekely', password: 'password' },
+    { id: 'user2', name: 'Ravao Bodo', password: 'password' },
+    { id: 'guest', name: 'Mpitsidika', password: '' }
+  ];
 
   const userOptions = mockUsers
     .map(user => `<option value="${user.id}">${user.name}</option>`)
@@ -206,7 +250,7 @@ function toggleSignIn(container) {
       </select><br><br>
       <label for="password">Password:</label>
       <input type="password" id="password" placeholder="Enter Password"><br><br>
-      <button type="submit" class="btn btn--sign-in">Sign In</button>
+      <button type="submit">Sign In</button>
     </form>
   `;
 
@@ -215,7 +259,6 @@ function toggleSignIn(container) {
     const userId = document.getElementById('userId').value;
     const password = document.getElementById('password').value;
     const user = mockUsers.find(u => u.id === userId);
-
     if (!user) return alert('User not found!');
     if (user.password === '' || user.password === password) {
       currentUser = user;
@@ -228,27 +271,25 @@ function toggleSignIn(container) {
   });
 }
 
-// Update Auth Button UI
+// Update Auth Button
 function updateAuthButton() {
   const authBtnContainer = document.getElementById('auth-button');
-
   if (currentUser) {
     authBtnContainer.innerHTML = `
-      <button class="btn btn--sign-in" style="background-color: #ff4d4d;" 
-              onclick="event.preventDefault(); currentUser = null; updateAuthButton(); showToast('Signed out successfully');">
+      <button style="background-color: #ff4d4d;" onclick="event.preventDefault(); currentUser = null; updateAuthButton(); showToast('Signed out successfully');">
         Sign Out (${currentUser.name})
       </button>
     `;
   } else {
     authBtnContainer.innerHTML = `
-      <button class="btn btn--sign-in" onclick="event.preventDefault(); toggleSignIn(document.getElementById('content'))">
+      <button onclick="event.preventDefault(); toggleSignIn(document.getElementById('content'))">
         Sign In
       </button>
     `;
   }
 }
 
-// Show Toast Notification
+// Toast Notification
 function showToast(message) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
@@ -258,23 +299,37 @@ function showToast(message) {
 
 // Modal Functions
 function showConstructionModal() {
-  document.getElementById('construction-modal').classList.remove('hidden');
+  const modal = document.getElementById('construction-modal');
+  modal.classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function hideConstructionModal() {
-  document.getElementById('construction-modal').classList.add('hidden');
+  const modal = document.getElementById('construction-modal');
+  modal.classList.add('hidden');
 }
 
-// Hover behavior for menu buttons
-document.querySelectorAll('.nav__list .btn').forEach(button => {
-  const defaultMessage = document.getElementById('default-message');
-  button.addEventListener('mouseenter', () => {
-    const tab = button.getAttribute('data-tab');
-    if (tab !== activeTab) {
-      defaultMessage.classList.remove('hidden');
-    }
+// Event Listeners for Tabs
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('#menu button').forEach(button => {
+    button.addEventListener('click', function () {
+      const tab = this.getAttribute('data-tab');
+      handleTabChange(tab);
+    });
+
+    // Hover effects
+    const defaultMessage = document.getElementById('default-message');
+    button.addEventListener('mouseenter', () => {
+      const tab = button.getAttribute('data-tab');
+      if (tab !== activeTab) {
+        defaultMessage.classList.remove('hidden');
+      }
+    });
+    button.addEventListener('mouseleave', () => {
+      defaultMessage.classList.add('hidden');
+    });
   });
-  button.addEventListener('mouseleave', () => {
-    defaultMessage.classList.add('hidden');
-  });
+
+  // Initialize default view
+  handleTabChange(activeTab);
 });
