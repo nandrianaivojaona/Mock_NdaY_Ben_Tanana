@@ -1,95 +1,15 @@
 {
-  "user": {
-    "name": "Citizen",
-    "logo": "logo.png",
-    "tagline": "Empowering Communities Through Transparency"
+  "municipalBankAccounts": {
+    "general_tax_account": "MA0010000012345678901234",
+    "special_projects_account": "MA0010000098765432109876"
   },
-  "taxStatus": {
-    "year": 2023,
-    "status": "Paid",
-    "amount": "$500",
-    "blockchainVerified": true
+  "bankReceiptValidationRules": {
+    "amountTolerance": 500
   },
-  "paymentForm": {
-    "fields": [
-      { "label": "Tax Amount", "type": "number", "placeholder": "Enter amount" },
-      { "label": "Mobile Number", "type": "text", "placeholder": "Enter mobile number" },
-      { "label": "Payment Method", "type": "select", "options": ["MVola", "Orange Money", "AirTel Money"] }
-    ]
-  },
-  "history": [
-    { "year": 2022, "status": "Paid", "amount": "$450", "blockchainVerified": true },
-    { "year": 2021, "status": "Unpaid", "amount": "$400", "blockchainVerified": false },
-    { "year": 2020, "status": "Paid", "amount": "$350", "blockchainVerified": true }
-  ],
-  "blockchainInfo": {
-    "description": "All transactions are verified using blockchain technology to ensure transparency and prevent fraud.",
-    "icon": "blockchain-icon.png"
-  },
-  "kioskServices": [
-    { "service": "Land Tax Payment", "description": "Pay your land taxes securely via mobile money." },
-    { "service": "Civil Documents", "description": "Obtain infalsifiable civil documents with blockchain verification." },
-    { "service": "Weather Alerts", "description": "Access real-time weather alerts for better agricultural planning." }
-  ],
-  "users": [
-    { "id": 1, "name": "Rakoto Andriamena", "gender": "Male", "location": "Antananarivo" },
-    { "id": 2, "name": "Rasoanirina Lalao", "gender": "Female", "location": "Alasora" },
-    { "id": 3, "name": "Jean Dupont", "gender": "Male", "location": "Toamasina" }
-  ],
   "taxation": {
-    "land": [
-      { "year": 2023, "amount": "$500", "status": "Paid", "blockchainVerified": true },
-      { "year": 2022, "amount": "$450", "status": "Paid", "blockchainVerified": true },
-      { "year": 2021, "amount": "$400", "status": "Unpaid", "blockchainVerified": false }
-    ],
-    "transport": [
-      { "year": 2023, "amount": "$100", "status": "Paid", "blockchainVerified": true },
-      { "year": 2022, "amount": "$80", "status": "Paid", "blockchainVerified": true },
-      { "year": 2021, "amount": "$60", "status": "Unpaid", "blockchainVerified": false }
-    ],
-    "sell": [
-      { "year": 2023, "amount": "$200", "status": "Paid", "blockchainVerified": true },
-      { "year": 2022, "amount": "$180", "status": "Paid", "blockchainVerified": true },
-      { "year": 2021, "amount": "$150", "status": "Unpaid", "blockchainVerified": false }
-    ],
-    "services": [
-      { "year": 2023, "amount": "$150", "status": "Paid", "blockchainVerified": true },
-      { "year": 2022, "amount": "$120", "status": "Paid", "blockchainVerified": true },
-      { "year": 2021, "amount": "$100", "status": "Unpaid", "blockchainVerified": false }
-    ]
-  },
-  "certificates": {
-    "birth": [
-      { "id": 1, "name": "Rakoto Andriamena", "date": "2000-05-15", "place": "Antananarivo", "blockchainVerified": true },
-      { "id": 2, "name": "Lalao Rasoanirina", "date": "1995-08-20", "place": "Alasora", "blockchainVerified": true }
-    ],
-    "marriage": [
-      { "id": 1, "spouse1": "Rakoto Andriamena", "spouse2": "Lalao Rasoanirina", "date": "2020-12-10", "place": "Antananarivo", "blockchainVerified": true }
-    ],
-    "death": [
-      { "id": 1, "name": "Jean Dupont", "date": "2022-03-05", "place": "Toamasina", "blockchainVerified": true }
-    ]
-  },
-  "legalizationActs": {
-    "landAcquisition": [
-      { "id": 1, "owner": "Rakoto Andriamena", "date": "2021-07-25", "blockchainVerified": true },
-      { "id": 2, "owner": "Lalao Rasoanirina", "date": "2020-09-15", "blockchainVerified": true }
-    ],
-    "mutation": [
-      { "id": 1, "previousOwner": "Rakoto Andriamena", "newOwner": "Lalao Rasoanirina", "date": "2022-01-10", "blockchainVerified": true }
-    ],
-    "bailOfMarketings": [
-      { "id": 1, "owner": "Rakoto Andriamena", "tenant": "Lalao Rasoanirina", "startDate": "2023-01-01", "endDate": "2023-12-31", "blockchainVerified": true }
-    ]
-  },
-  "certificationOriginals": {
-    "idCard": [
-      { "id": 1, "name": "Rakoto Andriamena", "issueDate": "2020-05-01", "expiryDate": "2030-05-01", "blockchainVerified": true },
-      { "id": 2, "name": "Lalao Rasoanirina", "issueDate": "2019-07-15", "expiryDate": "2029-07-15", "blockchainVerified": true }
-    ],
-    "drivingLicense": [
-      { "id": 1, "name": "Rakoto Andriamena", "issueDate": "2018-03-10", "expiryDate": "2028-03-10", "blockchainVerified": true },
-      { "id": 2, "name": "Lalao Rasoanirina", "issueDate": "2017-09-20", "expiryDate": "2027-09-20", "blockchainVerified": true }
-    ]
+    "land": [ ... ],
+    "transport": [ ... ],
+    "sell": [ ... ],
+    "services": [ ... ]
   }
 }

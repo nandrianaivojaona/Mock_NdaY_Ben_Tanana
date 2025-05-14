@@ -11,11 +11,9 @@
 /* ================== */
 /* === BASE STYLES ==== */
 /* ================== */
-
 html {
   scroll-behavior: smooth;
 }
-
 body {
   font-family: Arial, sans-serif;
   position: relative;
@@ -34,7 +32,7 @@ body::before {
   background-image: url('assets/images/NdaY_Logo.png');
   background-size: cover;
   background-position: center;
-  opacity: 0.6;
+  opacity: 0.4;
   z-index: -1;
 }
 
@@ -155,8 +153,8 @@ nav .sign-in {
 #signin-form input {
   padding: 8px;
   margin-bottom: 10px;
-  border-radius: 4px;
   border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 14px;
 }
 
@@ -190,6 +188,7 @@ main {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
 }
 
 /* Default Message Styling */
@@ -199,22 +198,13 @@ main {
   padding: 20px;
   background-color: #f0f0f0;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   text-align: center;
   font-size: 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: opacity 0.3s ease;
-}
-
-#default-message.dimmed {
-  opacity: 0.5;
-}
-
-#default-message.hidden {
-  display: none;
-}
-
-#default-message {
-  transition: opacity 0.3s ease;
+  opacity: 1;
 }
 
 #default-message.hidden {
@@ -348,36 +338,113 @@ footer {
 }
 
 /* ================== */
-/* === RESPONSIVE DESIGN === */
-/* ================== */
+/* === PAYMENT PROCESS === */
 
-@media (max-width: 600px) {
-  .logo {
-    width: 60px;
-    height: 60px;
-  }
-
-  .logo-text,
-  .tagline {
-    font-size: 8px;
-  }
-
-  .tagline {
-    font-size: 6px;
-  }
-
-  nav ul {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  nav button {
-    width: 100%;
-    text-align: center;
-  }
+.orange-money-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f1faff;
+  border-left: 4px solid #067c78;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+#payment-form input,
+#payment-form select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#payment-form button {
+  margin-top: 10px;
+  background-color: #067c78;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#payment-form button:hover {
+  background-color: #6ef4c7;
+  color: black;
+}
+
+
+/* ================== */
+/* === Ensure file upload is styled clearly === */
+
+#receiptUpload {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-group.required label::after {
+  content: " *";
+  color: red;
+}
+
+/* ================== */
+/* === Upload preview === */
+#receiptUpload {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-group.required label::after {
+  content: " *";
+  color: red;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+#payment-form input,
+#payment-form select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#payment-form button {
+  margin-top: 10px;
+  background-color: #067c78;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#payment-form button:hover {
+  background-color: #6ef4c7;
+  color: black;
+}
+/* ================== */
 /* Dropdown styles */
+/* ======================= */
+
+
 .dropdown {
   position: relative;
 }
@@ -426,7 +493,33 @@ footer {
   display: block !important;
 }
 
-/* Hidden class */
-.hidden {
-  display: none !important;
+
+/* ================== */
+/* === RESPONSIVE DESIGN === */
+/* ================== */
+
+@media (max-width: 600px) {
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo-text,
+  .tagline {
+    font-size: 8px;
+  }
+
+  .tagline {
+    font-size: 6px;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav button {
+    width: 100%;
+    text-align: center;
+  }
 }
