@@ -1,3 +1,21 @@
+// Global error handler for uncaught errors
+window.onerror = function(message, source, lineno, colno, error) {
+  console.error('Uncaught error:', { message, source, lineno, colno, error });
+  if (typeof showToast === 'function') {
+    showToast('An unexpected error occurred. Please try again or contact support.');
+  }
+  return true; // Prevent default browser error handling
+};
+
+// Global unhandled promise rejection handler
+window.addEventListener('unhandledrejection', function(event) {
+  console.error('Unhandled promise rejection:', event.reason);
+  if (typeof showToast === 'function') {
+    showToast('An unexpected error occurred. Please try again or contact support.');
+  }
+  event.preventDefault(); // Prevent default browser handling
+});
+
 let currentUser = null; // Tracks authenticated user
 const currentYear = new Date().getFullYear();
 
@@ -208,191 +226,275 @@ function renderPayTaxForm(container, userId) {
 
 // Unified Generalized Payment Form
 function showGeneralPaymentForm(container, record) {
-  container.innerHTML = `
-    <h2>Confirm Land Tax Payment</h2>
-    <form id="payment-form">
-      <!-- Static Info -->
-      <div class="form-group">
-        <label for="plotNumber">Land Reference (Plot Number):</label>
-        <input type="text" id="plotNumber" value="${record.plotNumber}" readonly>
-      </div>
-
-      <div class="form-group">
-        <label for="year">Year:</label>
-        <input type="text" id="year" value="${record.year}" readonly>
-      </div>
-
-      <div class="form-group">
-        <label for="amount">Amount to Pay:</label>
-        <input type="text" id="amount" value="${record.amount}" readonly>
-      </div>
-
-      <!-- Payment Method Selection -->
-      <div class="form-group">
-        <label for="paymentMethod">Choose Payment Method:</label>
-        <select id="paymentMethod" required>
-          <option value="">-- Select Payment Method --</option>
-          <option value="orange_money">Orange Money</option>
-          <option value="mvola">Mvola</option>
-          <option value="airtel_money">Airtel Money</option>
-          <option value="credit_card">Credit Card</option>
-          <option value="bank_transfer">Bank Transfer</option>
-          <option value="other">Other Online Payment</option>
-        </select>
-      </div>
-
-      <!-- Conditional Fields Based on Method -->
-      <div id="conditional-fields" class="hidden"></div>
-
-      <!-- Receipt Upload (Optional) -->
-      <div class="form-group">
-        <label for="receiptUpload">Attach Receipt (Optional):</label>
-        <input type="file" id="receiptUpload" accept="image/*, .pdf">
-      </div>
-
-      <button type="submit">Proceed to Verification</button>
-    </form>
-  `;
-
-  const paymentMethodSelect = document.getElementById('paymentMethod');
-  const conditionalFields = document.getElementById('conditional-fields');
-
-  // Dynamically update form based on selected method
-  paymentMethodSelect.addEventListener('change', () => {
-    conditionalFields.classList.remove('hidden');
-    conditionalFields.innerHTML = '';
-
-    const method = paymentMethodSelect.value;
-
-    switch (method) {
-      case 'orange_money':
-      case 'mvola':
-      case 'airtel_money':
-        conditionalFields.innerHTML = `
-          <div class="form-group">
-            <label for="senderPhone">Sender Phone Number:</label>
-            <input type="tel" id="senderPhone" placeholder="e.g., 0341234567" pattern="[0-9]{10}" required>
-          </div>
-          <div class="form-group">
-            <label for="transactionRef">Transaction Reference:</label>
-            <input type="text" id="transactionRef" placeholder="Enter reference code" required>
-          </div>
-          <div class="form-group">
-            <label for="transactionDate">Transaction Date & Time:</label>
-            <input type="text" id="transactionDate" placeholder="e.g., 12/25/2024 14:30:00" required>
-          </div>
-        `;
-        break;
-
-      case 'credit_card':
-        conditionalFields.innerHTML = `
-          <div class="form-group">
-            <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" placeholder="e.g., 4242 4242 4242 4242" required>
-          </div>
-          <div class="form-group">
-            <label for="cardExpiry">Card Expiry (MM/YY):</label>
-            <input type="text" id="cardExpiry" placeholder="e.g., 12/25" required>
-          </div>
-          <div class="form-group">
-            <label for="cardCvv">CVV:</label>
-            <input type="password" id="cardCvv" placeholder="e.g., 123" required>
-          </div>
-        `;
-        break;
-
-      case 'bank_transfer':
-        const municipalAccount = mockData.municipalBankAccounts.general_tax_account;
-
-        conditionalFields.innerHTML = `
-          <div class="form-group">
-            <label for="senderAccount">Sender Bank Account:</label>
-            <input type="text" id="senderAccount" placeholder="e.g., MA0010000012345678901234" pattern="[A-Z0-9]{24}" required>
-          </div>
-          <div class="form-group">
-            <label for="recipientAccount">Recipient (Municipal) Account:</label>
-            <input type="text" id="recipientAccount" value="${municipalAccount}" readonly>
-          </div>
-          <div class="form-group">
-            <label for="transferDate">Transfer Date & Time (MD/DD/YYYY HH:MM:SS):</label>
-            <input type="text" id="transferDate" placeholder="e.g., 12/25/2024 14:30:00" required>
-          </div>
-        `;
-        break;
-
-      case 'other':
-        conditionalFields.innerHTML = `
-          <p>Please complete this transaction using your preferred method.</p>
-        `;
-        break;
-
-      default:
-        conditionalFields.classList.add('hidden');
+  try {
+    // Validate input parameters
+    if (!container) {
+      showToast('Payment form error: Invalid container. Please try again.');
+      return;
     }
-  });
-
-  // Handle form submission
-  document.getElementById('payment-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const method = paymentMethodSelect.value;
-    const receiptFile = document.getElementById('receiptUpload').files[0];
-
-    if (!method.trim()) {
-      alert("Please select a payment method.");
+    
+    if (!record || !record.plotNumber || !record.year || !record.amount) {
+      showToast('Payment form error: Invalid payment record. Please try again.');
       return;
     }
 
-    let senderPhone, transactionRef, cardNumber, transferDate;
+    container.innerHTML = `
+      <h2>Confirm Land Tax Payment</h2>
+      <form id="payment-form">
+        <!-- Static Info -->
+        <div class="form-group">
+          <label for="plotNumber">Land Reference (Plot Number):</label>
+          <input type="text" id="plotNumber" value="${record.plotNumber}" readonly>
+        </div>
 
-    if (['orange_money', 'mvola', 'airtel_money'].includes(method)) {
-      senderPhone = document.getElementById('senderPhone').value;
-      transactionRef = document.getElementById('transactionRef').value;
+        <div class="form-group">
+          <label for="year">Year:</label>
+          <input type="text" id="year" value="${record.year}" readonly>
+        </div>
 
-      if (!senderPhone || !transactionRef) {
-        alert("Please fill in all highlighted fields.");
-        return;
-      }
+        <div class="form-group">
+          <label for="amount">Amount to Pay:</label>
+          <input type="text" id="amount" value="${record.amount}" readonly>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="form-group">
+          <label for="paymentMethod">Choose Payment Method:</label>
+          <select id="paymentMethod" required>
+            <option value="">-- Select Payment Method --</option>
+            <option value="orange_money">Orange Money</option>
+            <option value="mvola">Mvola</option>
+            <option value="airtel_money">Airtel Money</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="other">Other Online Payment</option>
+          </select>
+        </div>
+
+        <!-- Conditional Fields Based on Method -->
+        <div id="conditional-fields" class="hidden"></div>
+
+        <!-- Receipt Upload (Optional) -->
+        <div class="form-group">
+          <label for="receiptUpload">Attach Receipt (Optional):</label>
+          <input type="file" id="receiptUpload" accept="image/*, .pdf">
+        </div>
+
+        <button type="submit">Proceed to Verification</button>
+      </form>
+    `;
+
+    const paymentMethodSelect = document.getElementById('paymentMethod');
+    const conditionalFields = document.getElementById('conditional-fields');
+    
+    // Check if critical elements exist
+    if (!paymentMethodSelect) {
+      showToast('Payment form error: Payment method selector not found. Please refresh and try again.');
+      return;
+    }
+    
+    if (!conditionalFields) {
+      showToast('Payment form error: Form fields container not found. Please refresh and try again.');
+      return;
     }
 
-    if (method === 'credit_card') {
-      cardNumber = document.getElementById('cardNumber').value;
-      if (!cardNumber) {
-        alert("Card number is required.");
+    // Dynamically update form based on selected method
+    paymentMethodSelect.addEventListener('change', () => {
+      try {
+        conditionalFields.classList.remove('hidden');
+        conditionalFields.innerHTML = '';
+
+        const method = paymentMethodSelect.value;
+
+        switch (method) {
+          case 'orange_money':
+          case 'mvola':
+          case 'airtel_money':
+            conditionalFields.innerHTML = `
+              <div class="form-group">
+                <label for="senderPhone">Sender Phone Number:</label>
+                <input type="tel" id="senderPhone" placeholder="e.g., 0341234567" pattern="[0-9]{10}" required>
+              </div>
+              <div class="form-group">
+                <label for="transactionRef">Transaction Reference:</label>
+                <input type="text" id="transactionRef" placeholder="Enter reference code" required>
+              </div>
+              <div class="form-group">
+                <label for="transactionDate">Transaction Date & Time:</label>
+                <input type="text" id="transactionDate" placeholder="e.g., 12/25/2024 14:30:00" required>
+              </div>
+            `;
+            break;
+
+          case 'credit_card':
+            conditionalFields.innerHTML = `
+              <div class="form-group">
+                <label for="cardNumber">Card Number:</label>
+                <input type="text" id="cardNumber" placeholder="e.g., 4242 4242 4242 4242" required>
+              </div>
+              <div class="form-group">
+                <label for="cardExpiry">Card Expiry (MM/YY):</label>
+                <input type="text" id="cardExpiry" placeholder="e.g., 12/25" required>
+              </div>
+              <div class="form-group">
+                <label for="cardCvv">CVV:</label>
+                <input type="password" id="cardCvv" placeholder="e.g., 123" required>
+              </div>
+            `;
+            break;
+
+          case 'bank_transfer':
+            // Safely access mockData
+            if (!mockData || !mockData.municipalBankAccounts || !mockData.municipalBankAccounts.general_tax_account) {
+              showToast('Payment form error: Bank account data is unavailable. Please try again later.');
+              return;
+            }
+            
+            const municipalAccount = mockData.municipalBankAccounts.general_tax_account;
+
+            conditionalFields.innerHTML = `
+              <div class="form-group">
+                <label for="senderAccount">Sender Bank Account:</label>
+                <input type="text" id="senderAccount" placeholder="e.g., MA0010000012345678901234" pattern="[A-Z0-9]{24}" required>
+              </div>
+              <div class="form-group">
+                <label for="recipientAccount">Recipient (Municipal) Account:</label>
+                <input type="text" id="recipientAccount" value="${municipalAccount}" readonly>
+              </div>
+              <div class="form-group">
+                <label for="transferDate">Transfer Date & Time (MD/DD/YYYY HH:MM:SS):</label>
+                <input type="text" id="transferDate" placeholder="e.g., 12/25/2024 14:30:00" required>
+              </div>
+            `;
+            break;
+
+          case 'other':
+            conditionalFields.innerHTML = `
+              <p>Please complete this transaction using your preferred method.</p>
+            `;
+            break;
+
+          default:
+            conditionalFields.classList.add('hidden');
+        }
+      } catch (error) {
+        console.error('Payment method change error:', error);
+        showToast('Payment form error: Unable to update form fields. Please try again.');
+      }
+    });
+
+  // Handle form submission
+  document.getElementById('payment-form').addEventListener('submit', function (e) {
+    try {
+      e.preventDefault();
+
+      const method = paymentMethodSelect.value;
+      const receiptFile = document.getElementById('receiptUpload').files[0];
+
+      if (!method.trim()) {
+        alert("Please select a payment method.");
         return;
       }
+
+      let senderPhone, transactionRef, cardNumber, transferDate;
+
+      if (['orange_money', 'mvola', 'airtel_money'].includes(method)) {
+        const senderPhoneElement = document.getElementById('senderPhone');
+        const transactionRefElement = document.getElementById('transactionRef');
+        
+        if (!senderPhoneElement || !transactionRefElement) {
+          showToast('Payment form error: Required fields are missing. Please refresh and try again.');
+          return;
+        }
+        
+        senderPhone = senderPhoneElement.value;
+        transactionRef = transactionRefElement.value;
+
+        if (!senderPhone || !transactionRef) {
+          alert("Please fill in all highlighted fields.");
+          return;
+        }
+      }
+
+      if (method === 'credit_card') {
+        const cardNumberElement = document.getElementById('cardNumber');
+        
+        if (!cardNumberElement) {
+          showToast('Payment form error: Card number field is missing. Please refresh and try again.');
+          return;
+        }
+        
+        cardNumber = cardNumberElement.value;
+        if (!cardNumber) {
+          alert("Card number is required.");
+          return;
+        }
+      }
+
+      if (method === 'bank_transfer') {
+        const transferDateElement = document.getElementById('transferDate');
+        const senderAccountElement = document.getElementById('senderAccount');
+        const recipientAccountElement = document.getElementById('recipientAccount');
+        
+        if (!transferDateElement || !senderAccountElement || !recipientAccountElement) {
+          showToast('Payment form error: Required fields are missing. Please refresh and try again.');
+          return;
+        }
+        
+        transferDate = transferDateElement.value;
+        const senderAccount = senderAccountElement.value;
+        const recipientAccount = recipientAccountElement.value;
+
+        if (!senderAccount || !recipientAccount || !transferDate) {
+          alert("Please fill in all highlighted fields.");
+          return;
+        }
+
+        // Safely access mockData with error handling
+        if (!mockData || !mockData.bankReceiptValidationRules || !mockData.bankReceiptValidationRules.allowedBankAccounts) {
+          showToast('Payment processing error: Bank validation data is unavailable. Please try again later.');
+          return;
+        }
+
+        if (!mockData.bankReceiptValidationRules.allowedBankAccounts.includes(recipientAccount)) {
+          alert("Invalid recipient account number.");
+          return;
+        }
+
+        // Simulate amount match check with error handling
+        if (!record || !record.amount) {
+          showToast('Payment processing error: Invalid payment record. Please try again.');
+          return;
+        }
+        
+        const expectedAmount = parseInt(record.amount.replace(/[^0-9]/g, ''));
+        const fakeScannedReceiptAmount = expectedAmount;
+        const tolerance = mockData.bankReceiptValidationRules.amountTolerance || 0;
+
+        if (Math.abs(expectedAmount - fakeScannedReceiptAmount) > tolerance) {
+          alert(`The transferred amount does not match the expected amount (within ±Ar${tolerance}).`);
+          return;
+        }
+      }
+
+      // Mark as paid and simulate finance unit approval
+      if (!record) {
+        showToast('Payment processing error: Invalid payment record. Please try again.');
+        return;
+      }
+      
+      record.paid = true;
+      simulateFinanceVerification(container, record, method, receiptFile);
+    } catch (error) {
+      console.error('Payment form submission error:', error);
+      showToast('An unexpected error occurred during payment processing. Please try again or contact support.');
     }
-
-    if (method === 'bank_transfer') {
-      transferDate = document.getElementById('transferDate').value;
-      const senderAccount = document.getElementById('senderAccount').value;
-      const recipientAccount = document.getElementById('recipientAccount').value;
-
-      if (!senderAccount || !recipientAccount || !transferDate) {
-        alert("Please fill in all highlighted fields.");
-        return;
-      }
-
-      if (!mockData.bankReceiptValidationRules.allowedBankAccounts.includes(recipientAccount)) {
-        alert("Invalid recipient account number.");
-        return;
-      }
-
-      // Simulate amount match check
-      const expectedAmount = parseInt(record.amount.replace(/[^0-9]/g, ''));
-      const fakeScannedReceiptAmount = expectedAmount;
-      const tolerance = mockData.bankReceiptValidationRules.amountTolerance;
-
-      if (Math.abs(expectedAmount - fakeScannedReceiptAmount) > tolerance) {
-        alert(`The transferred amount does not match the expected amount (within ±Ar${tolerance}).`);
-        return;
-      }
-    }
-
-    // Mark as paid and simulate finance unit approval
-    record.paid = true;
-    simulateFinanceVerification(container, record, method, receiptFile);
   });
+  
+  } catch (error) {
+    console.error('Payment form creation error:', error);
+    showToast('An unexpected error occurred while creating the payment form. Please try again or contact support.');
+  }
 }
 
 // Function: Simulate Finance Unit Approval
